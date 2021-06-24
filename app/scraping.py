@@ -1,6 +1,10 @@
+import re
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
+
+from assets.database import db_session
+from assets.models import Data
+
 import datetime
 
 def get_udemy_info():
@@ -29,20 +33,19 @@ def get_udemy_info():
     return  results
 
 def write_data():
-    df = pd.read_csv('assets/data.csv')
-
+    # 新規データの読み込み
     _results = get_udemy_info()
 
     # 今日の日付、受講者数、レビュー数を取得
-    date = datetime.datetime.today().strftime('%Y/%-m/%-d')
+    date = datetime.date.today()
     subscribers = _results['n_subscribers']
     reviews = _results['n_reviews']
 
-    results = pd.DataFrame([[date, subscribers, reviews]], columns=['date', 'subscribers', 'reviews'])
+    row = Data(date=date, subscribers=subscribers, reviews=reviews)
+    
+    db_session.add(row)
+    db_session.commit()
 
-    df = pd.concat([df, results])
-
-    df.to_csv('assets/data.csv', index=False)    
 
 if __name__ == "__main__":
     write_data()
