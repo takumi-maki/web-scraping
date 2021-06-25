@@ -30,6 +30,8 @@ diff_reviews = pd.Series(reviews).diff().values
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
+server = app.server
+
 app.layout=html.Div(children=[
     html.H2(children='Pythonによるwebスクレイピング〜アプリケーション編〜'),
     html.Div(children=[
